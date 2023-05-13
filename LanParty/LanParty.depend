@@ -1,11 +1,12 @@
 # depslib dependency file v1.0
-1683981897 source:c:\users\bogdan\desktop\temapa\lanparty\main.c
+1683992320 source:c:\users\bogdan\desktop\temapa\lanparty\main.c
 	"tasks.h"
 
-1683981818 source:c:\users\bogdan\desktop\temapa\lanparty\tasks.c
+1683991515 source:c:\users\bogdan\desktop\temapa\lanparty\tasks.c
 	"tasks.h"
 
-1683979437 c:\users\bogdan\desktop\temapa\lanparty\tasks.h
+1683987098 c:\users\bogdan\desktop\temapa\lanparty\tasks.h
 	<stdio.h>
 	<stdlib.h>
+	<string.h>
 

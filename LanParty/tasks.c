@@ -15,7 +15,7 @@ void check_null(void* ptr) {
         exit(1);
     }
 }
-
+/*----------------------------TASK1 INCEPUT----------------------------------*/
 void ReadPlayers(PD *Players, int nr_playeri, FILE* fisier) {
     char nume[30], prenume[30];
     int puncte;
@@ -52,6 +52,8 @@ void ReadTeamList(TL **head, int *Nr_Echipe) {
         fscanf(fisier, "%d", &Nr_Playeri);
         fgetc(fisier);
         fgets(Nume_Echipa, 50, fisier);
+        if(Nume_Echipa[strlen(Nume_Echipa)-1]==' ')
+            Nume_Echipa[strlen(Nume_Echipa)-1]='\0';
         ReadTeamDetails(head, Nume_Echipa, Nr_Playeri, fisier);
     }
     fclose(fisier);
@@ -59,7 +61,71 @@ void ReadTeamList(TL **head, int *Nr_Echipe) {
 
 void DisplayTeams(TL *head, int Nr_Echipe,FILE *fisier) {
     for(int i = 0; i < Nr_Echipe; ++i) {
-        fprintf(fisier,"%s", head->Team.Team_Name);
+        fprintf(fisier,"%s",head->Team.Team_Name);
         head = head->next;
     }
 }
+/*----------------------------TASK1 SFARSIT----------------------------------*/
+
+/*----------------------------TASK2 INCEPUT----------------------------------*/
+int NrMaxPosibil(int Nr_Echipe) {
+    int NrPosibil = 1;
+    while (NrPosibil < Nr_Echipe) {
+        NrPosibil = NrPosibil * 2;
+    }
+    NrPosibil = NrPosibil / 2;
+    return NrPosibil;
+}
+void TeamPoints(TL *head, int Nr_Echipe) {
+    TL *aux = head;
+    for (int i = 0; i < Nr_Echipe; ++i) {
+        float pct = 0;
+        aux->Team.PuncteEchipa=0;
+        for (int j = 0; j < aux->Team.Nr_Players; ++j) {
+            pct += aux->Team.Players[j].points;
+        }
+        aux->Team.PuncteEchipa = (float)pct / aux->Team.Nr_Players;
+        aux = aux->next;
+    }
+}
+void DeleteTeam(TL** head, float min) {
+    if (*head == NULL) {
+        return;
+    }
+    TL* nodeToDelete = *head;
+    if (nodeToDelete->Team.PuncteEchipa == min) {
+        *head = nodeToDelete->next;
+        free(nodeToDelete);
+        return;
+    }
+    TL* prevNode = *head;
+    nodeToDelete = nodeToDelete->next;
+    while (nodeToDelete != NULL) {
+        if (nodeToDelete->Team.PuncteEchipa == min) {
+            prevNode->next = nodeToDelete->next;
+            free(nodeToDelete);
+            return;
+        }
+        prevNode = nodeToDelete;
+        nodeToDelete = nodeToDelete->next;
+    }
+}
+void RemoveTeams(TL **head, int *Nr_Echipe) {
+    int NrPosibil = NrMaxPosibil(*Nr_Echipe);
+    int NrEchipe = *Nr_Echipe;
+    TeamPoints(*head, NrEchipe);
+    while (NrEchipe > NrPosibil) {
+        TL *aux = *head;
+        float min = aux->Team.PuncteEchipa;
+        while (aux != NULL) {
+            if (aux->Team.PuncteEchipa < min) {
+                min = aux->Team.PuncteEchipa;
+            }
+            aux = aux->next;
+        }
+        DeleteTeam(head, min);
+        NrEchipe--;
+    }
+    *Nr_Echipe = NrPosibil;
+}
+/*----------------------------TASK2 SFARSIT----------------------------------*/
