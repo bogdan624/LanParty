@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct PlayerDetails
 {
@@ -22,4 +23,21 @@ struct TeamList
     struct TeamList *next;
 };
 typedef struct TeamList TL;
-
+struct MeciuriEchipe
+{
+    TD Team1;
+    TD Team2;
+    struct MeciuriEchipe *next;
+};
+typedef struct MeciuriEchipe ME;
+struct CoziEchipe
+{
+    ME *front,*rear;
+};
+typedef struct CoziEchipe CE;
+struct StivaEchipe
+{
+    TD Team;
+    struct StivaEchipe* next;
+};
+typedef struct StivaEchipe SE;
