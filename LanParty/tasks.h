@@ -41,3 +41,9 @@ struct StivaEchipe
     struct StivaEchipe* next;
 };
 typedef struct StivaEchipe SE;
+struct NodArboreEchipe
+{
+    TD Team;
+    struct NodArboreEchipe *left,*right;
+};
+typedef struct NodArboreEchipe NAE;

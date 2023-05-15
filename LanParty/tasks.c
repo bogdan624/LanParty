@@ -53,7 +53,9 @@ void ReadTeamList(TL **head, int *Nr_Echipe) {
         fscanf(fisier, "%d", &Nr_Playeri);
         fgetc(fisier);
         fgets(Nume_Echipa, 50, fisier);
-        Nume_Echipa[strlen(Nume_Echipa)-1] = NULL;
+        Nume_Echipa[strlen(Nume_Echipa)-1] = '\0';
+        if(Nume_Echipa[strlen(Nume_Echipa)-1] == ' ')
+            Nume_Echipa[strlen(Nume_Echipa)-1] = '\0';
         ReadTeamDetails(head, Nume_Echipa, Nr_Playeri, fisier);
     }
     fclose(fisier);
@@ -195,7 +197,7 @@ TD popStiva(SE** top)
     SE* aux;
     if (*top == NULL) {
         printf("Stiva este goala.\n");
-        return;
+        exit(1);
     }
     echipaEliminata = (*top)->Team;
     aux = *top;
@@ -248,18 +250,42 @@ void processMatches(CE* matchesQueue, SE** winnersStack, SE** losersStack) {
     while (matchesQueue->front != NULL) {
         dequeue(matchesQueue, &team1, &team2);
         if (team1.PuncteEchipa > team2.PuncteEchipa) {
+            for(int i = 0; i <team1.Nr_Players;++i){
+                team1.Players[i].points++;
+            }
             team1.PuncteEchipa++;
             pushStiva(&*winnersStack, team1);
             pushStiva(&*losersStack, team2);
         } else {
+            for(int i = 0; i <team2.Nr_Players;++i){
+                team2.Players[i].points++;
+            }
             team2.PuncteEchipa++;
             pushStiva(&*winnersStack, team2);
             pushStiva(&*losersStack, team1);
         }
     }
 }
+void addTeamsToTL(TL** head, SE* stiva) {
+    while (stiva != NULL) {
+        TL* new_node = (TL*)malloc(sizeof(TL));
+        new_node->Team = stiva->Team;
+        new_node->next = NULL;
+        if (*head == NULL) {
+            *head = new_node;
+        }
+        else {
+            TL* current = *head;
+            while (current->next != NULL) {
+                current = current->next;
+            }
+            current->next = new_node;
+        }
+        stiva = stiva->next;
+    }
+}
 
-void AfisareTask3(TL* head, int Nr_Echipe, FILE* fisier){
+void AfisareTask3(TL* head, int Nr_Echipe, FILE* fisier, TL** echipe_ramase){
     int NrEchipe = Nr_Echipe;
     int round = 1;
     CE* coada = createQueue();
@@ -268,13 +294,15 @@ void AfisareTask3(TL* head, int Nr_Echipe, FILE* fisier){
     afiseazaMeciuri(coada,fisier);
     SE* castigatori = NULL;
     SE* pierzatori = NULL;
-    TD echipa1, echipa2;
     processMatches(coada,&castigatori,&pierzatori);
     fprintf(fisier,"\nWINNERS OF ROUND NO:%d",round);
     printStiva(castigatori,fisier);
     NrEchipe /=2;
     deleteStack(pierzatori);
     while(NrEchipe>1){
+        if(NrEchipe == 8){
+            addTeamsToTL(echipe_ramase,castigatori);
+        }
         round++;
         addTeamsFromStackToQueue(&castigatori,coada);
         fprintf(fisier,"\n--- ROUND NO:%d",round);
@@ -286,3 +314,46 @@ void AfisareTask3(TL* head, int Nr_Echipe, FILE* fisier){
     }
 }
 /*----------------------------TASK3 SFARSIT----------------------------------*/
+
+/*----------------------------TASK4 INCEPUT----------------------------------*/
+NAE * newNode ( TD data ) {
+    NAE * node = allocate_memory(sizeof(NAE));
+    node->Team = data ;
+    node->left=node->right=NULL ;
+    return node ;
+}
+NAE * insert ( NAE * node , TD key) {
+    if ( node == NULL ) return newNode ( key );
+    if ( key.PuncteEchipa < node->Team.PuncteEchipa)
+    node-> left = insert(node->left,key);
+    else if (key.PuncteEchipa > node->Team.PuncteEchipa)
+    node->right = insert(node->right,key);
+    else if(key.PuncteEchipa == node->Team.PuncteEchipa){
+        if(strcmp(key.Team_Name,node->Team.Team_Name)>0){
+            node->right = insert(node->right,key);
+        }
+        else {
+            node-> left = insert(node->left,key);
+        }
+    }
+    return node ;
+}
+void inorderRightToLeft(NAE* root,FILE *fisier) {
+    if (root == NULL) {
+        return;
+    }
+    inorderRightToLeft(root->right,fisier);
+    fprintf(fisier,"%-32s  -  %.2f\n", root->Team.Team_Name,root->Team.PuncteEchipa);
+    inorderRightToLeft(root->left,fisier);
+}
+void AfisareTask4(TL*head,NAE* arbore,FILE* fisier){
+    arbore = NULL;
+    while(head->next != NULL){
+        arbore=insert(arbore,head->Team);
+        head = head->next;
+    }
+    arbore=insert(arbore,head->Team);
+    fprintf(fisier,"\nTOP 8 TEAMS:\n");
+    inorderRightToLeft(arbore,fisier);
+}
+/*----------------------------TASK4 SFARSIT----------------------------------*/
