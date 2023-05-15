@@ -5,6 +5,7 @@ int main()
     FILE *fisier_taskuri, *check;
     int *task;
     TL *head = NULL;
+    TL *OptEchipe = NULL;
     int Nr_Echipe = 0;
     fisier_taskuri=fopen("c.in","rt");
     check = fopen("test.txt","wt");
@@ -22,11 +23,12 @@ int main()
         DisplayTeams(head,Nr_Echipe,check);
     }
     if(task[2]==1){
-        AfisareTask3(head,Nr_Echipe,check);
-    }/*
-    if(task[3]==1){
-        Task4();
+        AfisareTask3(head,Nr_Echipe,check,&OptEchipe);
     }
+    if(task[3]==1){
+        NAE * arbore = allocate_memory(sizeof(NAE));
+        AfisareTask4(OptEchipe,arbore,check);
+    }/*
     if(task[4]==1){
         Task5();
     }*/
