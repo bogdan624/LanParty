@@ -47,3 +47,10 @@ struct NodArboreEchipe
     struct NodArboreEchipe *left,*right;
 };
 typedef struct NodArboreEchipe NAE;
+struct NodArboreEchipeAVL
+{
+    int height;
+    TD Team;
+    struct NodArboreEchipeAVL *left,*right;
+};
+typedef struct NodArboreEchipeAVL AVL;
