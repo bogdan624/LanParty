@@ -54,3 +54,51 @@ struct NodArboreEchipeAVL
     struct NodArboreEchipeAVL *left,*right;
 };
 typedef struct NodArboreEchipeAVL AVL;
+void* allocate_memory(size_t size);
+void check_null(void* ptr);
+
+void ReadPlayers(PD* Players, int nr_playeri, FILE* fisier);
+void ReadTeamDetails(TL** head, char* Nume_Echipa, int Nr_Playeri, FILE* fisier);
+void ReadTeamList(TL** head, int* Nr_Echipe);
+void DisplayTeams(TL* head, int Nr_Echipe, FILE* fisier);
+
+int NrMaxPosibil(int Nr_Echipe);
+void TeamPoints(TL* head, int Nr_Echipe);
+void DeleteTeam(TL** head, float min);
+void RemoveTeams(TL** head, int* Nr_Echipe);
+
+CE* createQueue();
+void enqueue(CE* q, TD t1, TD t2);
+void dequeue(CE* q, TD* t1, TD* t2);
+void addTeamsToQueue(TL* teamsList, CE* matchesQueue);
+void afiseazaMeciuri(CE* coada, FILE* fisier);
+void pushStiva(SE** top, TD team);
+TD popStiva(SE** top);
+void printStiva(SE* top, FILE* fisier);
+void deleteQueue(CE* q);
+void clearStack(SE** top);
+void deleteStack(SE* top);
+void addTeamsFromStackToQueue(SE** top, CE* matchesQueue);
+void processMatches(CE* matchesQueue, SE** winnersStack, SE** losersStack);
+void addTeamsToTL(TL** head, SE* stiva);
+void AfisareTask3(TL* head, int Nr_Echipe, FILE* fisier, TL** echipe_ramase);
+
+NAE* newNode(TD data);
+NAE* insertNAE(NAE* node, TD key);
+void inorderRightToLeft(NAE* root, FILE* fisier);
+NAE* AfisareTask4(TL* head, NAE* arbore, FILE* fisier);
+
+int max(int a, int b);
+int nodeHeight(AVL* root);
+AVL* rightRotation(AVL* z);
+AVL* leftRotation(AVL* z);
+AVL* LRRotation(AVL* Z);
+AVL* RLRotation(AVL* Z);
+AVL* balanceAVL(AVL* node, TD key);
+AVL* insertAVL(AVL* node, TD key);
+void insertTeam(TL** tl_head, TD team);
+void transferDataNAEtoTL(NAE* nae, TL** tl_head);
+AVL* transferTLtoAVL(TL* list);
+void inorderRightToLeftAVL(AVL* root, FILE* fisier);
+void reverseTL(TL** head);
+void AfisareTask5(TL* lista, AVL* echipe, FILE* fisier);

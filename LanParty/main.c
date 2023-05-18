@@ -14,12 +14,14 @@ int main()
     check_null(check);
     fscanf(fisier_taskuri,"%d %d %d %d %d",&task[0],&task[1],&task[2],&task[3],&task[4]);
     NAE * arbore = allocate_memory(sizeof(NAE));
-    /*if(task[0]==1){
+    if(task[0]==1){
         ReadTeamList(&head,&Nr_Echipe);
         DisplayTeams(head,Nr_Echipe,check);
-    }*/
+        fclose(check);
+    }
     if(task[1]==1){
-        ReadTeamList(&head,&Nr_Echipe);
+        check = fopen("test.txt","wt");
+        check_null(check);
         RemoveTeams(&head,&Nr_Echipe);
         DisplayTeams(head,Nr_Echipe,check);
     }
