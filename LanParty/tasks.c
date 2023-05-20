@@ -41,9 +41,7 @@ void ReadTeamDetails(TL **head, char* Nume_Echipa, int Nr_Playeri, FILE* fisier)
     *head=newNode;
 }
 
-void ReadTeamList(TL **head, int *Nr_Echipe) {
-    FILE* fisier = fopen("d.in", "rt");
-    check_null(fisier);
+void ReadTeamList(TL **head, int *Nr_Echipe,FILE* fisier) {
     int Nr = 0;
     fscanf(fisier, "%d", &Nr);
     *Nr_Echipe = Nr;

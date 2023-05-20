@@ -59,7 +59,7 @@ void check_null(void* ptr);
 
 void ReadPlayers(PD* Players, int nr_playeri, FILE* fisier);
 void ReadTeamDetails(TL** head, char* Nume_Echipa, int Nr_Playeri, FILE* fisier);
-void ReadTeamList(TL** head, int* Nr_Echipe);
+void ReadTeamList(TL** head, int* Nr_Echipe,FILE* fisier);
 void DisplayTeams(TL* head, int Nr_Echipe, FILE* fisier);
 
 int NrMaxPosibil(int Nr_Echipe);
