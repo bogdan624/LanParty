@@ -72,7 +72,7 @@ void DisplayTeams(TL *head, int Nr_Echipe,FILE *fisier) {
 /*----------------------------TASK2 INCEPUT----------------------------------*/
 int NrMaxPosibil(int Nr_Echipe) {
     int NrPosibil = 1;
-    while (NrPosibil < Nr_Echipe) {
+    while (NrPosibil <= Nr_Echipe) {
         NrPosibil = NrPosibil * 2;
     }
     NrPosibil = NrPosibil / 2;
@@ -484,14 +484,25 @@ AVL* transferTLtoAVL(TL* list) {
     return tree;
 }
 
-void inorderRightToLeftAVL(AVL* root, FILE* fisier) {
-    if (root == NULL) {
-        return;
+void PrintLevel2(AVL* root, FILE* output) {
+    if (root == NULL) return;
+    if (root->right != NULL) {
+        if (root->right->right != NULL) {
+            fprintf(output, "%-32s\n", root->right->right->Team.Team_Name);
+        }
+        if (root->right->left != NULL) {
+            fprintf(output, "%-32s\n", root->right->left->Team.Team_Name);
+        }
     }
-    if(root->height == 0)
-        fprintf(fisier, "%s\n", root->Team.Team_Name);
-    inorderRightToLeftAVL(root->right, fisier);
-    inorderRightToLeftAVL(root->left, fisier);
+
+    if (root->left != NULL) {
+        if (root->left->right != NULL) {
+            fprintf(output, "%-32s\n", root->left->right->Team.Team_Name);
+        }
+        if (root->left->left != NULL) {
+            fprintf(output, "%-32s\n", root->left->left->Team.Team_Name);
+        }
+    }
 }
 
 void reverseTL(TL** head) {
@@ -510,6 +521,6 @@ void reverseTL(TL** head) {
 void AfisareTask5(TL* lista, AVL* echipe, FILE* fisier) {
     echipe = transferTLtoAVL(lista);
     fprintf(fisier, "\nTHE LEVEL 2 TEAMS ARE:\n");
-    inorderRightToLeftAVL(echipe, fisier);
+    PrintLevel2(echipe, fisier);
 }
 /*----------------------------TASK5 SFARSIT----------------------------------*/
