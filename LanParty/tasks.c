@@ -322,18 +322,18 @@ NAE * newNode ( TD data ) {
     node->left=node->right=NULL ;
     return node ;
 }
-NAE * insert ( NAE * node , TD key) {
+NAE * insertNAE ( NAE * node , TD key) {
     if ( node == NULL ) return newNode ( key );
     if ( key.PuncteEchipa < node->Team.PuncteEchipa)
-    node-> left = insert(node->left,key);
+    node-> left = insertNAE(node->left,key);
     else if (key.PuncteEchipa > node->Team.PuncteEchipa)
-    node->right = insert(node->right,key);
+    node->right = insertNAE(node->right,key);
     else if(key.PuncteEchipa == node->Team.PuncteEchipa){
         if(strcmp(key.Team_Name,node->Team.Team_Name)>0){
-            node->right = insert(node->right,key);
+            node->right = insertNAE(node->right,key);
         }
         else {
-            node-> left = insert(node->left,key);
+            node-> left = insertNAE(node->left,key);
         }
     }
     return node ;
@@ -346,14 +346,168 @@ void inorderRightToLeft(NAE* root,FILE *fisier) {
     fprintf(fisier,"%-32s  -  %.2f\n", root->Team.Team_Name,root->Team.PuncteEchipa);
     inorderRightToLeft(root->left,fisier);
 }
-void AfisareTask4(TL*head,NAE* arbore,FILE* fisier){
+NAE* AfisareTask4(TL*head,NAE* arbore,FILE* fisier){
     arbore = NULL;
     while(head->next != NULL){
-        arbore=insert(arbore,head->Team);
+        arbore=insertNAE(arbore,head->Team);
         head = head->next;
     }
-    arbore=insert(arbore,head->Team);
+    arbore=insertNAE(arbore,head->Team);
     fprintf(fisier,"\nTOP 8 TEAMS:\n");
     inorderRightToLeft(arbore,fisier);
+    return arbore;
 }
 /*----------------------------TASK4 SFARSIT----------------------------------*/
+
+/*----------------------------TASK5 INCEPUT----------------------------------*/
+int max (int a,int b) {
+    return ((a>b)?a:b);
+}
+int nodeHeight ( AVL * root ){
+    if ( root == NULL ) return -1;
+    else return root->height ;
+}
+AVL * rightRotation ( AVL *z){
+    AVL *y = z->left ;
+    AVL *T3 = y->right ;
+    y->right = z;
+    z->left = T3;
+    z->height = max( nodeHeight (z->left) ,
+    nodeHeight (z->right ))+1;
+    y->height = max( nodeHeight (y->left ) ,
+    nodeHeight (y->right))+1;
+    return y;
+}
+AVL * leftRotation ( AVL *z) {
+    AVL *y = z->right ;
+    AVL *T2 = y->left ;
+    y->left = z;
+    z->right = T2;
+    z->height = max( nodeHeight (z->left ) ,
+    nodeHeight (z->right))+1;
+    y->height = max( nodeHeight (y->left ) ,
+    nodeHeight (y->right))+1;
+    return y;
+}
+AVL * LRRotation ( AVL *Z) {
+    Z->left = leftRotation (Z->left );
+    return rightRotation (Z);
+}
+AVL * RLRotation ( AVL *Z) {
+    Z->right = rightRotation (Z->right );
+    return leftRotation (Z);
+}
+AVL * insertAVL ( AVL * node , TD key) {
+    if ( node == NULL ){
+        node = allocate_memory(sizeof(AVL));
+        node->Team = key;
+        node-> height = 0;
+        node->left =node->right=NULL ;
+        return node ;
+    }
+    if ( key.PuncteEchipa < node->Team.PuncteEchipa)
+    node->left = insertAVL (node->left,key);
+    else if (key.PuncteEchipa > node->Team.PuncteEchipa)
+    node->right = insertAVL (node->right,key);
+    else {
+        int verf = strcmp(key.Team_Name,node->Team.Team_Name);
+        if(verf > 0)
+            node->right = insertAVL(node->right,key);
+        else
+            node->left = insertAVL(node->left,key);
+    }
+    node->height = 1 + max(nodeHeight(node->left ),nodeHeight (node->right));
+    int k=(nodeHeight(node->left)-nodeHeight(node->right));
+    if (k > 1 && key.PuncteEchipa < node->left->Team.PuncteEchipa)
+        return rightRotation ( node );
+    if (k < -1 && key.PuncteEchipa > node->left->Team.PuncteEchipa)
+        return leftRotation ( node );
+    if (k > 1 && key.PuncteEchipa > node->left->Team.PuncteEchipa)
+        return LRRotation ( node );
+    if (k < -1 && key.PuncteEchipa < node->left->Team.PuncteEchipa)
+        return RLRotation ( node );
+    if (k > 1 && key.PuncteEchipa == node->left->Team.PuncteEchipa){
+        if(strcmp(key.Team_Name,node->left->Team.Team_Name)>0)
+            return LRRotation ( node );
+        else
+            return rightRotation ( node );
+    }
+    if (k < -1 && key.PuncteEchipa == node->left->Team.PuncteEchipa){
+        if(strcmp(key.Team_Name,node->left->Team.Team_Name)>0)
+            return leftRotation ( node );
+        else
+            return RLRotation ( node );
+    }
+    return node;
+}
+void insertTeam(TL** tl_head, TD team) {
+    TL* new_team =allocate_memory(sizeof(TL));
+    new_team->Team = team;
+    new_team->next = NULL;
+
+    if (*tl_head == NULL) {
+        *tl_head = new_team;
+        return;
+    }
+
+    TL* curr = *tl_head;
+    TL* prev = NULL;
+    while (curr != NULL && curr->Team.PuncteEchipa < team.PuncteEchipa) {
+        prev = curr;
+        curr = curr->next;
+    }
+
+    if (prev == NULL) {
+        new_team->next = *tl_head;
+        *tl_head = new_team;
+    } else {
+        prev->next = new_team;
+        new_team->next = curr;
+    }
+}
+
+void transferDataNAEtoTL(NAE* nae, TL** tl_head) {
+    if (nae == NULL) {
+        return;
+    }
+    transferDataNAEtoTL(nae->right, tl_head);
+    insertTeam(tl_head, nae->Team);
+    transferDataNAEtoTL(nae->left, tl_head);
+}
+AVL* transferTLtoAVL(TL* list) {
+    AVL* tree = NULL;
+    TL* current = list;
+    while (current != NULL) {
+        tree = insertAVL(tree, current->Team);
+        current = current->next;
+    }
+    return tree;
+}
+void inorderRightToLeftAVL(AVL* root,FILE *fisier) {
+    if (root == NULL) {
+        return;
+    }
+    if(root->height == 2){
+        fprintf(fisier,"%s",root->Team.Team_Name);
+    }
+    inorderRightToLeftAVL(root->right,fisier);
+    inorderRightToLeftAVL(root->left,fisier);
+}
+void reverseTL(TL** head) {
+    TL* prev = NULL;
+    TL* current = *head;
+    TL* next = NULL;
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    *head = prev;
+}
+void AfisareTask5(TL* lista, AVL* echipe, FILE*fisier){
+    echipe = transferTLtoAVL(lista);
+    fprintf(fisier,"\nTHE LEVEL 2 TEAMS ARE:\n");
+    inorderRightToLeftAVL(echipe,fisier);
+}
+/*----------------------------TASK5 SFARSIT----------------------------------*/
