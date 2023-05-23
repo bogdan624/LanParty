@@ -1,11 +1,14 @@
 # LanParty
 Tema numarul 1 la PA
+
 Acest exercițiu implică organizarea și desfășurarea unei competiții între echipe, urmând un set de reguli specifice. Vom utiliza structuri de date precum liste, cozi, stive și arbori binari pentru a gestiona meciurile și a determina echipele câștigătoare.
 
 Detalii Tehnice
+
 Punctajul de echipă: Fiecare echipă are un punctaj de echipă, care reprezintă scorul acumulat în timpul competiției. Modul de calcul al acestui punctaj nu este specificat în acest exercițiu.
 
 Instrucțiuni
+
 Citirea și crearea listei:
 
 Se va citi conținutul fișierului "d.in".
