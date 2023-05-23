@@ -51,9 +51,10 @@ void ReadTeamList(TL **head, int *Nr_Echipe,FILE* fisier) {
         fscanf(fisier, "%d", &Nr_Playeri);
         fgetc(fisier);
         fgets(Nume_Echipa, 50, fisier);
-        Nume_Echipa[strlen(Nume_Echipa)-1] = '\0';
-        if(Nume_Echipa[strlen(Nume_Echipa)-1] == ' ')
-            Nume_Echipa[strlen(Nume_Echipa)-1] = '\0';
+        if(Nume_Echipa[strlen(Nume_Echipa)-3] == ' ')
+            Nume_Echipa[strlen(Nume_Echipa)-3] = '\0';
+	else
+	    Nume_Echipa[strlen(Nume_Echipa)-2] = '\0';
         ReadTeamDetails(head, Nume_Echipa, Nr_Playeri, fisier);
     }
     fclose(fisier);
@@ -61,6 +62,8 @@ void ReadTeamList(TL **head, int *Nr_Echipe,FILE* fisier) {
 
 void DisplayTeams(TL *head, int Nr_Echipe,FILE *fisier) {
     for(int i = 0; i < Nr_Echipe; ++i) {
+	if(head->Team.Team_Name[strlen(head->Team.Team_Name)-1] == ' ')
+            head->Team.Team_Name[strlen(head->Team.Team_Name)-1] = '\0';
         fprintf(fisier,"%s\n",head->Team.Team_Name);
         head = head->next;
     }
@@ -70,7 +73,7 @@ void DisplayTeams(TL *head, int Nr_Echipe,FILE *fisier) {
 /*----------------------------TASK2 INCEPUT----------------------------------*/
 int NrMaxPosibil(int Nr_Echipe) {
     int NrPosibil = 1;
-    while (NrPosibil < Nr_Echipe) {
+    while (NrPosibil <= Nr_Echipe) {
         NrPosibil = NrPosibil * 2;
     }
     NrPosibil = NrPosibil / 2;
@@ -398,23 +401,6 @@ AVL* RLRotation(AVL* Z) {
     Z->right = rightRotation(Z->right);
     return leftRotation(Z);
 }
-AVL* balanceAVL(AVL* node, TD key) {
-    int balanceFactor = nodeHeight(node->left) - nodeHeight(node->right);
-    if (balanceFactor > 1 && key.PuncteEchipa < node->left->Team.PuncteEchipa)
-        return rightRotation(node);
-    if (balanceFactor < -1 && key.PuncteEchipa > node->right->Team.PuncteEchipa)
-        return leftRotation(node);
-    if (balanceFactor > 1 && key.PuncteEchipa > node->left->Team.PuncteEchipa) {
-        node->left = leftRotation(node->left);
-        return rightRotation(node);
-    }
-    if (balanceFactor < -1 && key.PuncteEchipa < node->right->Team.PuncteEchipa) {
-        node->right = rightRotation(node->right);
-        return leftRotation(node);
-    }
-
-    return node;
-}
 AVL* insertAVL(AVL* node, TD key) {
     if (node == NULL) {
         AVL* newNode = allocate_memory(sizeof(AVL));
@@ -435,8 +421,33 @@ AVL* insertAVL(AVL* node, TD key) {
             node->left = insertAVL(node->left, key);
     }
     node->height = 1 + max(nodeHeight(node->left), nodeHeight(node->right));
-    node = balanceAVL(node, key);
-
+    int balanceFactor = nodeHeight(node->left) - nodeHeight(node->right);
+    if(balanceFactor>1){
+	if(key.PuncteEchipa < node->left->Team.PuncteEchipa)
+		return rightRotation(node);
+	else if(key.PuncteEchipa > node->left->Team.PuncteEchipa)
+		return LRRotation(node);
+	else {
+		int verf = strcmp(key.Team_Name, node->left->Team.Team_Name);
+		if(verf>0)
+			return LRRotation(node);
+		else 
+			return rightRotation(node);	
+	}
+    }
+    if(balanceFactor < -1){
+	if(key.PuncteEchipa > node->right->Team.PuncteEchipa)
+		return leftRotation(node);
+	else if(key.PuncteEchipa < node->right->Team.PuncteEchipa)
+		return RLRotation(node);
+	else {
+		int verf = strcmp(key.Team_Name, node->right->Team.Team_Name);
+		if(verf>0)
+			return leftRotation(node);
+		else
+			return RLRotation(node);
+	}
+    }
     return node;
 }
 void insertTeam(TL** tl_head, TD team) {
@@ -482,14 +493,25 @@ AVL* transferTLtoAVL(TL* list) {
     return tree;
 }
 
-void inorderRightToLeftAVL(AVL* root, FILE* fisier) {
-    if (root == NULL) {
-        return;
+void PrintLevel2(AVL* root, FILE* output) {
+    if (root == NULL) return;
+    if (root->right != NULL) {
+        if (root->right->right != NULL) {
+            fprintf(output, "%-32s\n", root->right->right->Team.Team_Name);
+        }
+        if (root->right->left != NULL) {
+            fprintf(output, "%-32s\n", root->right->left->Team.Team_Name);
+        }
     }
-    if(root->height == 0)
-        fprintf(fisier, "%s\n", root->Team.Team_Name);
-    inorderRightToLeftAVL(root->right, fisier);
-    inorderRightToLeftAVL(root->left, fisier);
+
+    if (root->left != NULL) {
+        if (root->left->right != NULL) {
+            fprintf(output, "%-32s\n", root->left->right->Team.Team_Name);
+        }
+        if (root->left->left != NULL) {
+            fprintf(output, "%-32s\n", root->left->left->Team.Team_Name);
+        }
+    }
 }
 
 void reverseTL(TL** head) {
@@ -508,6 +530,6 @@ void reverseTL(TL** head) {
 void AfisareTask5(TL* lista, AVL* echipe, FILE* fisier) {
     echipe = transferTLtoAVL(lista);
     fprintf(fisier, "\nTHE LEVEL 2 TEAMS ARE:\n");
-    inorderRightToLeftAVL(echipe, fisier);
+    PrintLevel2(echipe, fisier);
 }
 /*----------------------------TASK5 SFARSIT----------------------------------*/
