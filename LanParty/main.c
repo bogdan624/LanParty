@@ -7,9 +7,9 @@ int main(int argc,char **argv)
     TL *head = NULL;
     TL *OptEchipe = NULL;
     int Nr_Echipe = 0;
-    fisierC=fopen(argv[1],"rt");
-    fisierD=fopen(argv[2],"rt");
-    fisierR = fopen(argv[3],"wt");
+    fisierC=fopen(argv[1],"r");
+    fisierD=fopen(argv[2],"r");
+    fisierR = fopen(argv[3],"w");
     task=allocate_memory(5*sizeof(int));
     check_null(fisierC);
     check_null(fisierD);
