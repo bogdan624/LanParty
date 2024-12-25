@@ -1,5 +1,5 @@
 # LanParty
-Tema numarul 1 la PA
+LanParty project
 
 Acest exercițiu implică organizarea și desfășurarea unei competiții între echipe, urmând un set de reguli specifice. Vom utiliza structuri de date precum liste, cozi, stive și arbori binari pentru a gestiona meciurile și a determina echipele câștigătoare.
 
